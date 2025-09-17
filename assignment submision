@@ -1,0 +1,116 @@
+
+Conversation opened. 1 unread message.
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.datasets import load_iris
+
+# Setup: Create a CSV file to work with
+iris_data = load_iris()
+df_initial = pd.DataFrame(data=iris_data.data, columns=iris_data.feature_names)
+df_initial['species'] = iris_data.target_names[iris_data.target]
+df_initial.to_csv('iris.csv', index=False)
+print(" - Setup: 'iris.csv' created for the analysis - ")
+
+# Task 1: Load and Explore the Dataset
+
+print(" - Task 1: Loading and Exploring the Dataset - ")
+
+try:
+    # Load the dataset from the CSV file
+    df = pd.read_csv('iris.csv')
+    print("\nSuccessfully loaded 'iris.csv'.")
+    
+    # Display the first few rows
+    print("\nFirst 5 rows of the dataset:")
+    print(df.head())
+
+    # Explore the structure and check for initial missing values
+    print("\nDataset Information:")
+    df.info()
+
+    # - Data Cleaning -
+    print("\n- Performing Data Cleaning -")
+    
+    # Check for missing values before cleaning
+    print(f"\nMissing values before cleaning:\n{df.isnull().sum()}")
+    df.dropna(inplace=True) # Drop rows with any missing values
+    print("Missing values have been handled (dropped).")
+
+    # Check for duplicate rows before cleaning
+    print(f"\nNumber of duplicate rows before cleaning: {df.duplicated().sum()}")
+    df.drop_duplicates(inplace=True) # Remove duplicate rows
+    print("Duplicate rows have been removed.")
+    
+    print("\nData cleaning complete.")
+
+except FileNotFoundError:
+    print("\nError: 'iris.csv' not found. Please ensure the file is in the correct directory.")
+    exit() # Exit the script if the file can't be loaded
+except Exception as e:
+    print(f"\nAn unexpected error occurred: {e}")
+    exit()
+
+# Task 2: Basic Data Analysis
+print("\n\n - Task 2: Basic Data Analysis - ")
+
+# Compute basic stats of the numerical columns
+print("\nBasic descriptive statistics for numerical columns:\n")
+print(df.describe())
+
+# Group by the 'species' categorical column and compute the mean for each group\
+print("\nMean of each feature, grouped by species:")
+species_mean = df.groupby('species').mean()
+print(species_mean)
+
+# Identify patterns or interesting findings
+print("\nObservations:")
+print("- Setosa species has the smallest petals.")
+print("- Virginica species generally has the largest features.")
+
+# Task 3: Data visualization
+
+print("\n\n - Task 3: Generating Data Visualizations - ")
+
+# Apply a visually appealing style from Seaborn
+sns.set_theme(style="whitegrid")
+
+# 1. Line Chart: Trend of 'sepal length (cm)' for Setosa samples
+plt.figure(figsize=(10, 6))
+setosa_df = df[df['species'] == 'setosa']
+sns.lineplot(data=setosa_df, x=setosa_df.index, y='sepal length (cm)', marker='o')
+plt.title('Trend of Sepal Length for Setosa Samples')
+plt.xlabel('Sample Index')
+plt.ylabel('Sepal Length (cm)')
+plt.show()
+
+# 2. Bar Chart: Average petal length for each species
+plt.figure(figsize=(10, 6))
+sns.barplot(x=species_mean.index, y=species_mean['petal length (cm)'], hue=species_mean.index, palette='viridis', legend=False)
+plt.title('Average Petal Length by Species')
+plt.xlabel('Species')
+plt.ylabel('Average Petal Length (cm)')
+plt.show()
+
+# 3. Histogram: Distribution of 'petal width (cm)'
+plt.figure(figsize=(10, 6))
+sns.histplot(df['petal width (cm)'], kde=True, bins=15, color='purple')
+plt.title('Distribution of Petal Width')
+plt.xlabel('Petal Width (cm)')
+plt.ylabel('Frequency')
+plt.show()
+
+# 4. Scatter Plot: Relationship between sepal length and petal length
+plt.figure(figsize=(10, 6))
+sns.scatterplot(data=df, x='sepal length (cm)', y='petal length (cm)', hue='species', palette='deep')
+plt.title('Sepal Length vs. Petal Length by Species')
+plt.xlabel('Sepal Length (cm)')
+plt.ylabel('Petal Length (cm)')
+plt.legend(title='Species')
+plt.show()
+
+print("\nAll visualizations have been generated.")
+
+analysis.py
+Displaying analysis.py.
